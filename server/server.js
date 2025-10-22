@@ -2,7 +2,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-
+import authRoutes from './routes/authRoutes.js'; // <-- 1. Import routes
 // Load env vars
 dotenv.config();
 
@@ -11,9 +11,16 @@ connectDB();
 
 const app = express();
 
+// Body parser middleware
+app.use(express.json()); // <-- 2. Add middleware for parsing JSON
+app.use(express.urlencoded({ extended: true }));
+
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+// API routes
+app.use('/api/auth', authRoutes); // <-- 3. Tell Express to use authRoutes
 
 const PORT = process.env.PORT || 5000;
 
