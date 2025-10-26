@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'; // <-- 1. Import routes
 import productRoutes from './routes/productRoutes.js'; // <-- 1. Import product routes
 import cookieParser from 'cookie-parser';
+import orderRoutes from './routes/orderRoutes.js';
 // Load env vars
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes); // <-- 3. Tell Express to use authRoutes
 app.use('/api/products', productRoutes); // <-- 2. Tell Express to use productRoutes
+app.use('/api/orders', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 
