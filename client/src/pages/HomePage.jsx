@@ -1,6 +1,7 @@
 // client/src/pages/HomePage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   // 1. Set up state to hold your products
@@ -37,10 +38,9 @@ const HomePage = () => {
       <div className="product-list">
         {products.map((product) => (
           <div key={product._id} className="product-card">
-            <a href={`/product/${product._id}`}>
-              {/* We'll add images later, just show name for now */}
+            <Link to={`/product/${product._id}`}>
               <h2>{product.name}</h2>
-            </a>
+            </Link>
             <p>{product.description}</p>
             <h3>${product.price}</h3>
           </div>

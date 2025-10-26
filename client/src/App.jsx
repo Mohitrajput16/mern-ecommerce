@@ -6,6 +6,7 @@ import ProductPage from './pages/ProductPage';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import Header from './components/Header.jsx';
+import CartPage from './pages/CartPage.jsx';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/cart" element={<CartPage />} />
           {/* Add more routes here later, e.g., /login, /cart */}
         </Routes>
       </main>
