@@ -70,4 +70,13 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser };
+
+const logoutUser = async (req, res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0), // Set expiration date to the past
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+};
+
+export { registerUser, loginUser, logoutUser };

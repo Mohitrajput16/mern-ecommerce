@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'; // <-- 1. Import routes
 import productRoutes from './routes/productRoutes.js'; // <-- 1. Import product routes
+import cookieParser from 'cookie-parser';
 // Load env vars
 dotenv.config();
 
@@ -15,6 +16,8 @@ const app = express();
 // Body parser middleware
 app.use(express.json()); // <-- 2. Add middleware for parsing JSON
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send('API is running...');

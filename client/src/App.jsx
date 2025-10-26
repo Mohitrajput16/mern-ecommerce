@@ -5,13 +5,12 @@ import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
+import Header from './components/Header.jsx';
 
 const App = () => {
   return (
     <BrowserRouter>
-      <header>
-        <h1>My E-Commerce App</h1>
-      </header>
+    <Header />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
