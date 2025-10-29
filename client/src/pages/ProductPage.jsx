@@ -30,12 +30,14 @@ const ProductPage = () => {
     fetchProduct();
   }, [productId]);
 
-  const addToCartHandler = () => {
-    // Dispatch the addToCart action with the product and selected quantity
-    dispatch(addToCart({ ...product, qty }));
-    // Redirect the user to the cart page
-    navigate('/cart');
-  };
+
+const addToCartHandler = () => {
+  // ADD THIS LINE FOR DEBUGGING:
+  console.log('ATTEMPTING TO ADD:', { ...product, qty });
+
+  dispatch(addToCart({ ...product, qty }));
+  navigate('/cart');
+};
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

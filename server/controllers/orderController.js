@@ -40,5 +40,26 @@ const createOrder = async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 };
+const getOrderById = async (req, res) => {
+  try {
+    // Find the order by its ID from the URL params
+    // 'populate' will replace the 'user' ID with the user's 'name' and 'email'
+    const order = await Order.findById(req.params.id).populate(
+      'user',
+      'name email'
+    );
 
-export { createOrder };
+    if (order) {
+      // Optional: Check if the user is an admin OR if the order belongs to them
+      // For now, we'll just return it if found
+      // (A more secure check would be: if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin))
+      res.json(order);
+    } else {
+      res.status(404).json({ message: 'Order not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+export { createOrder, getOrderById };

@@ -9,11 +9,14 @@ import Header from './components/Header.jsx';
 import CartPage from './pages/CartPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import ShippingPage from './pages/ShippingPage';
+import PaymentMethodPage from './pages/PaymentMethodPage.jsx';
+import PlaceOrderPage from './pages/PlaceOrderPage';
+import OrderPage from './pages/OrderPage';
 
 const App = () => {
   return (
     <BrowserRouter>
-    <Header />
+      <Header />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -21,16 +24,15 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="" element={<ProtectedRoute />}>
+
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/shipping" element={<ShippingPage />} />
-             
-</Route>
-  {/* We will add /shipping, /payment, /placeorder here */}
-</Route>
-          {/* Add more routes here later, e.g., /login, /cart */}
+            <Route path="/payment" element={<PaymentMethodPage />} />
+            <Route path="/placeorder" element={<PlaceOrderPage />} /> {/* <-- ADD THIS */}
+            <Route path="/order/:id" element={<OrderPage />} />      {/* <-- ADD THIS */}
+          </Route>
         </Routes>
-        
+
       </main>
       <footer>
         <p>Copyright &copy; 2025 My E-Commerce App</p>
