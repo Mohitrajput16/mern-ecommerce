@@ -7,6 +7,8 @@ import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import Header from './components/Header.jsx';
 import CartPage from './pages/CartPage.jsx';
+import ProtectedRoute from './components/ProtectedRoute';
+import ShippingPage from './pages/ShippingPage';
 
 const App = () => {
   return (
@@ -19,8 +21,16 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="" element={<ProtectedRoute />}>
+          <Route path="" element={<ProtectedRoute />}>
+            <Route path="/shipping" element={<ShippingPage />} />
+             
+</Route>
+  {/* We will add /shipping, /payment, /placeorder here */}
+</Route>
           {/* Add more routes here later, e.g., /login, /cart */}
         </Routes>
+        
       </main>
       <footer>
         <p>Copyright &copy; 2025 My E-Commerce App</p>

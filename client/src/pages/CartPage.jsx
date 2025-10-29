@@ -25,7 +25,7 @@ const CartPage = () => {
   // Handler for checkout
   const checkoutHandler = () => {
     // We'll build the shipping page next
-    navigate('/login?redirect=shipping');
+    navigate('/shipping');
   };
 
   // Calculate subtotal
