@@ -12,12 +12,13 @@ import ShippingPage from './pages/ShippingPage';
 import PaymentMethodPage from './pages/PaymentMethodPage.jsx';
 import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderPage from './pages/OrderPage';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Header />
-      <main>
+      <main className="min-h-screen py-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/product/:id" element={<ProductPage />} />
@@ -34,9 +35,8 @@ const App = () => {
         </Routes>
 
       </main>
-      <footer>
-        <p>Copyright &copy; 2025 My E-Commerce App</p>
-      </footer>
+      <Footer />
+      
     </BrowserRouter>
   );
 };
