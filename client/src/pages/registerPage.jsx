@@ -1,9 +1,10 @@
 // client/src/pages/RegisterPage.jsx
 import React, { useState } from 'react';
-import { setCredentials } from '../store/authSlice';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/authSlice';
+import axios from 'axios';
+import FormContainer from '../components/FormContainer'; // <-- Import
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -12,81 +13,111 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const dispatch = useDispatch();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const submitHandler = async (e) => {
-  e.preventDefault();
-  if (password !== confirmPassword) {
-    console.log('Passwords do not match'); // Add a user-facing alert later
-  } else {
-    try {
-      const res = await axios.post('/api/auth/register', {
-        name,
-        email,
-        password,
-      });
-
-      // Dispatch login action
-      dispatch(setCredentials(res.data));
-
-      // Redirect to home
-      navigate('/');
-    } catch (err) {
-      console.error(err?.response?.data?.message || err.message);
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      console.log('Passwords do not match');
+    } else {
+      try {
+        const res = await axios.post('/api/auth/register', { name, email, password });
+        dispatch(setCredentials(res.data));
+        navigate('/');
+      } catch (err) {
+        console.error(err?.response?.data?.message || err.message);
+      }
     }
-  }
-};
+  };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={submitHandler}>
+    <FormContainer>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Register</h1>
+      <form onSubmit={submitHandler} className="space-y-4">
         <div>
-          <label htmlFor="name">Name</label>
+          <label 
+            htmlFor="name" 
+            className="block text-sm font-medium text-gray-700"
+          >
+            Name
+          </label>
           <input
             type="text"
             id="name"
             placeholder="Enter name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            required
           />
         </div>
         <div>
-          <label htmlFor="email">Email Address</label>
+          <label 
+            htmlFor="email" 
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
             placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            required
           />
         </div>
         <div>
-          <label htmlFor="password">Password</label>
+          <label 
+            htmlFor="password" 
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
           <input
             type="password"
             id="password"
             placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            required
           />
         </div>
         <div>
-          <label htmlFor="confirmPassword">Confirm Password</label>
+          <label 
+            htmlFor="confirmPassword" 
+            className="block text-sm font-medium text-gray-700"
+          >
+            Confirm Password
+          </label>
           <input
             type="password"
             id="confirmPassword"
             placeholder="Confirm password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            required
           />
         </div>
-        <button type="submit">Register</button>
+        <button 
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+        >
+          Register
+        </button>
       </form>
-      <div>
-        Have an Account? <Link to="/login">Login</Link>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-600">
+          Have an Account?{' '}
+          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Login
+          </Link>
+        </p>
       </div>
-    </div>
+    </FormContainer>
   );
 };
 
