@@ -3,15 +3,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { saveShippingAddress } from '../store/cartSlice';
+import FormContainer from '../components/FormContainer'; // <-- Import
 
 const ShippingPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get the shipping address from the Redux store
   const { shippingAddress } = useSelector((state) => state.cart);
 
-  // Set component state, pre-filling with Redux data if it exists
   const [address, setAddress] = useState(shippingAddress.address || '');
   const [city, setCity] = useState(shippingAddress.city || '');
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || '');
@@ -19,63 +18,78 @@ const ShippingPage = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // Dispatch the action to save the address to Redux
     dispatch(saveShippingAddress({ address, city, postalCode, country }));
-    // Go to the next step
     navigate('/payment');
   };
 
   return (
-    <div>
-      <h1>Shipping</h1>
-      <form onSubmit={submitHandler}>
+    <FormContainer>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Shipping</h1>
+      <form onSubmit={submitHandler} className="space-y-4">
         <div>
-          <label htmlFor="address">Address</label>
+          <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+            Address
+          </label>
           <input
             type="text"
             id="address"
             placeholder="Enter address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
-          <label htmlFor="city">City</label>
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+            City
+          </label>
           <input
             type="text"
             id="city"
             placeholder="Enter city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
-          <label htmlFor="postalCode">Postal Code</label>
+          <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
+            Postal Code
+          </label>
           <input
             type="text"
             id="postalCode"
             placeholder="Enter postal code"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
-          <label htmlFor="country">Country</label>
+          <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+            Country
+          </label>
           <input
             type="text"
             id="country"
             placeholder="Enter country"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
-        <button type="submit">Continue</button>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+        >
+          Continue
+        </button>
       </form>
-    </div>
+    </FormContainer>
   );
 };
 

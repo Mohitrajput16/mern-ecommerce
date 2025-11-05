@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { savePaymentMethod } from '../store/cartSlice';
+import FormContainer from '../components/FormContainer'; // <-- Import
 
 const PaymentMethodPage = () => {
   const dispatch = useDispatch();
@@ -11,44 +12,53 @@ const PaymentMethodPage = () => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress, paymentMethod: currentPaymentMethod } = cart;
 
-  // If no shipping address, redirect to shipping page
   useEffect(() => {
     if (!shippingAddress.address) {
       navigate('/shipping');
     }
   }, [shippingAddress, navigate]);
 
-  // We'll just have PayPal for now
   const [paymentMethod, setPaymentMethod] = useState(currentPaymentMethod);
 
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(savePaymentMethod(paymentMethod));
-    navigate('/placeorder'); // Go to the next step
+    navigate('/placeorder');
   };
 
   return (
-    <div>
-      <h1>Payment Method</h1>
+    <FormContainer>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Payment Method</h1>
       <form onSubmit={submitHandler}>
-        <div>
-          <label>
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="PayPal"
-              checked={paymentMethod === 'PayPal'}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            PayPal or Credit Card
-          </label>
-        </div>
+        <fieldset>
+          <legend className="text-base font-medium text-gray-900">Select Method</legend>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center">
+              <input
+                id="PayPal"
+                name="paymentMethod"
+                type="radio"
+                value="PayPal"
+                checked={paymentMethod === 'PayPal'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+              />
+              <label htmlFor="PayPal" className="ml-3 block text-sm font-medium text-gray-700">
+                PayPal or Credit Card
+              </label>
+            </div>
+            {/* Add other payment methods here if you want */}
+          </div>
+        </fieldset>
 
-        {/* You could add more payment methods here like 'Stripe' */}
-
-        <button type="submit">Continue</button>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 mt-6"
+        >
+          Continue
+        </button>
       </form>
-    </div>
+    </FormContainer>
   );
 };
 
