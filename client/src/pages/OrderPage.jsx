@@ -2,10 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-
-// We'll create this component next for loading/error messages
-// import Loader from '../components/Loader';
-// import Message from '../components/Message';
+import Container from '../components/Container'; // <-- Import
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -26,110 +23,133 @@ const OrderPage = () => {
         setLoading(false);
       }
     };
-
     fetchOrder();
   }, [orderId]);
 
-  if (loading) return <p>Loading...</p>; // Replace with <Loader />
-  if (error) return <p>{error}</p>; // Replace with <Message variant="danger">{error}</Message>
-
-  // Helper function to add decimals
   const addDecimals = (num) => (Math.round(num * 100) / 100).toFixed(2);
 
-  // Calculate prices *from the order data*
+  if (loading) return <Container><p>Loading...</p></Container>;
+  if (error) return <Container><p className="bg-red-100 text-red-700 p-4 rounded">{error}</p></Container>;
+
+  // Calculate itemsPrice from the order data
   const itemsPrice = addDecimals(
     order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   );
 
   return (
-    <div>
-      <h1>Order {order._id}</h1>
-      <div style={{ display: 'flex' }}>
-        {/* Left Column: Details */}
-        <div style={{ flex: 2, marginRight: '2rem' }}>
-          <div>
-            <h2>Shipping</h2>
-            <p>
+    <Container>
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">Order Details</h1>
+      <p className="text-lg text-gray-600 mb-8">Order ID: {order._id}</p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Column 1: Order Details */}
+        <div className="lg:col-span-2">
+          {/* Shipping Details */}
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Shipping</h2>
+            <p className="text-gray-700 mb-1">
               <strong>Name: </strong> {order.user.name}
             </p>
-            <p>
-              <strong>Email: </strong> <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+            <p className="text-gray-700 mb-1">
+              <strong>Email: </strong> <a href={`mailto:${order.user.email}`} className="text-indigo-600 hover:underline">{order.user.email}</a>
             </p>
-            <p>
+            <p className="text-gray-700 mb-4">
               <strong>Address: </strong>
               {order.shippingAddress.address}, {order.shippingAddress.city},{' '}
               {order.shippingAddress.postalCode}, {order.shippingAddress.country}
             </p>
             {order.isDelivered ? (
-              <p style={{ color: 'green' }}>Delivered on {order.deliveredAt}</p>
+              <div className="bg-green-100 text-green-700 p-3 rounded-lg">
+                Delivered on {new Date(order.deliveredAt).toLocaleString()}
+              </div>
             ) : (
-              <p style={{ color: 'red' }}>Not Delivered</p>
+              <div className="bg-red-100 text-red-700 p-3 rounded-lg">
+                Not Delivered
+              </div>
             )}
           </div>
 
-          <div>
-            <h2>Payment Method</h2>
-            <p>
+          {/* Payment Method */}
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Payment Method</h2>
+            <p className="text-gray-700 mb-4">
               <strong>Method: </strong>
               {order.paymentMethod}
             </p>
             {order.isPaid ? (
-              <p style={{ color: 'green' }}>Paid on {order.paidAt}</p>
+              <div className="bg-green-100 text-green-700 p-3 rounded-lg">
+                Paid on {new Date(order.paidAt).toLocaleString()}
+              </div>
             ) : (
-              <p style={{ color: 'red' }}>Not Paid</p>
+              <div className="bg-red-100 text-red-700 p-3 rounded-lg">
+                Not Paid
+              </div>
             )}
           </div>
 
-          <div>
-            <h2>Order Items</h2>
-            {order.orderItems.length === 0 ? (
-              <p>Order is empty</p>
-            ) : (
-              <div>
-                {order.orderItems.map((item, index) => (
-                  <div key={index} style={{ display: 'flex', marginBottom: '0.5rem' }}>
-                    <span style={{ flex: 1 }}>
-                      <Link to={`/product/${item.product}`}>{item.name}</Link>
-                    </span>
-                    <span style={{ flex: 1 }}>
-                      {item.qty} x ${item.price} = ${addDecimals(item.qty * item.price)}
-                    </span>
+          {/* Order Items */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Order Items</h2>
+            <div className="divide-y divide-gray-200">
+              {order.orderItems.map((item, index) => (
+                <div key={index} className="flex items-center justify-between py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 bg-gray-200 rounded-md flex-shrink-0">
+                      {/* <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" /> */}
+                    </div>
+                    <div>
+                      <Link to={`/product/${item.product}`} className="font-medium text-gray-900 hover:text-indigo-600">
+                        {item.name}
+                      </Link>
+                    </div>
                   </div>
-                ))}
+                  <div className="text-gray-700">
+                    {item.qty} x ${item.price.toFixed(2)} = 
+                    <span className="font-semibold text-gray-900"> ${addDecimals(item.qty * item.price)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Column 2: Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="bg-white p-6 rounded-lg shadow-md sticky top-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 pb-4 border-b">
+              Order Summary
+            </h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-700">Items:</span>
+                <span className="font-medium text-gray-900">${itemsPrice}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-700">Shipping:</span>
+                <span className="font-medium text-gray-900">${order.shippingPrice}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-700">Tax:</span>
+                <span className="font-medium text-gray-900">${order.taxPrice}</span>
+              </div>
+              <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t mt-2">
+                <span>Total:</span>
+                <span>${order.totalPrice}</span>
+              </div>
+            </div>
+
+            {/* Payment button will go here */}
+            {!order.isPaid && (
+              <div className="mt-6">
+                <button className="w-full text-center py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500">
+                  Pay with PayPal (Placeholder)
+                </button>
               </div>
             )}
           </div>
         </div>
-
-        {/* Right Column: Order Summary */}
-        <div style={{ flex: 1, border: '1px solid #ccc', padding: '1rem' }}>
-          <h2>Order Summary</h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Items:</span>
-            <span>${itemsPrice}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Shipping:</span>
-            <span>${order.shippingPrice}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Tax:</span>
-            <span>${order.taxPrice}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong>Total:</strong>
-            <strong>${order.totalPrice}</strong>
-          </div>
-
-          {/* --- THIS IS WHERE THE PAYMENT BUTTON WILL GO --- */}
-          {!order.isPaid && (
-            <div>
-              <p>Payment button will go here (Stripe/PayPal).</p>
-            </div>
-          )}
-        </div>
       </div>
-    </div>
+    </Container>
   );
 };
 
