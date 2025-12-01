@@ -49,7 +49,7 @@ const Header = () => {
           {/* Logo / Main Nav */}
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             {/* Logo */}
-            <Link to="/" className="flex flex-shrink-0 items-center text-xl font-bold">
+            <Link to="/" className="flex shrink-0 items-center text-xl font-bold">
               MyEcom
             </Link>
           </div>
@@ -65,9 +65,13 @@ const Header = () => {
               )}
             </Link>
 
-            {userInfo ? (
+            {userInfo && (
               // User Dropdown
               <div className="relative">
+    {/* You can make this a dropdown later, for now just a link */}
+    <Link to="/admin/userlist" className="text-gray-300 hover:text-white">
+      Users
+    </Link>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 p-2 text-gray-300 hover:text-white"
@@ -94,13 +98,12 @@ const Header = () => {
                   </div>
                 )}
               </div>
-            ) : (
-              // Login Link
+            ) } 
               <Link to="/login" className="flex items-center space-x-2 p-2 text-gray-300 hover:text-white">
                 <FaUser className="h-6 w-6" />
                 <span>Sign In</span>
               </Link>
-            )}
+            
           </div>
 
           {/* Mobile-only Cart (to show it next to the hamburger) */}

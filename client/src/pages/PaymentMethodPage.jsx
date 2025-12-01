@@ -47,6 +47,21 @@ const PaymentMethodPage = () => {
                 PayPal or Credit Card
               </label>
             </div>
+            <div className="flex items-center">
+              <input
+                id="CashonDelivery"
+                name="paymentMethod"
+                type="radio"
+                value="CashonDelivery"
+                checked={paymentMethod === 'CashonDelivery'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+              />
+              <label htmlFor="CashonDelivery" className="ml-3 block text-sm font-medium text-gray-700">
+                Cash on Delivery
+              </label>
+            </div>
+            
             {/* Add other payment methods here if you want */}
           </div>
         </fieldset>

@@ -6,6 +6,8 @@ import authRoutes from './routes/authRoutes.js'; // <-- 1. Import routes
 import productRoutes from './routes/productRoutes.js'; // <-- 1. Import product routes
 import cookieParser from 'cookie-parser';
 import orderRoutes from './routes/orderRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+
 // Load env vars
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes); // <-- 3. Tell Express to use authRoutes
 app.use('/api/products', productRoutes); // <-- 2. Tell Express to use productRoutes
 app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes); // <-- 4. Tell Express to use userRoutes
+
 
 const PORT = process.env.PORT || 5000;
 
