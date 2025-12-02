@@ -14,6 +14,7 @@ import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderPage from './pages/OrderPage';
 import Footer from './components/Footer';
 import UserListPage from './pages/admin/userListPage.jsx';
+import ProductListPage from './pages/admin/productListPage.jsx';
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/placeorder" element={<PlaceOrderPage />} /> {/* <-- ADD THIS */}
             <Route path="/order/:id" element={<OrderPage />} />      {/* <-- ADD THIS */}
             <Route path="/admin/userlist" element={<UserListPage/>} />
+            <Route path="/admin/productlist" element={<ProductListPage />} />
           </Route>
         </Routes>
 

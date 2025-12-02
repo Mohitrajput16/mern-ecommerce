@@ -72,6 +72,10 @@ const Header = () => {
     <Link to="/admin/userlist" className="text-gray-300 hover:text-white">
       Users
     </Link>
+    {/* // Inside the admin check: */}
+<Link to="/admin/productlist" className="text-gray-300 hover:text-white ml-4">
+  Products
+</Link>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 p-2 text-gray-300 hover:text-white"

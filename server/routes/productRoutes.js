@@ -4,12 +4,15 @@ const router = express.Router();
 import {
   getAllProducts,
   getProductById,
+  deleteProduct,
 } from '../controllers/productController.js';
-
+import { protect, admin } from '../middleware/authMiddleware.js';
 // Route for getting all products
 router.route('/').get(getAllProducts);
 
-// Route for getting a single product by its ID
-router.route('/:id').get(getProductById);
+router
+  .route('/:id')
+  .get(getProductById)
+  .delete(protect, admin, deleteProduct);
 
 export default router;
