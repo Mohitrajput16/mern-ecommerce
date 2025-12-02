@@ -45,13 +45,17 @@ const ProductListPage = () => {
     }
   };
 
-  const createProductHandler = () => {
-    // We will build this feature next!
-    alert('Create Product feature coming next step!');
+  const createProductHandler = async () => {
+    try {
+      // 1. Call backend to create sample product
+      const { data: createdProduct } = await axios.post('/api/products', {});
+      
+      // 2. Redirect user to the edit page for that new product
+      navigate(`/admin/product/${createdProduct._id}/edit`);
+    } catch (err) {
+      alert(err.response ? err.response.data.message : err.message);
+    }
   };
-
-  if (loading) return <Container><p>Loading...</p></Container>;
-  if (error) return <Container><p className="text-red-500">{error}</p></Container>;
 
   return (
     <Container>

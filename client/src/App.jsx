@@ -15,6 +15,8 @@ import OrderPage from './pages/OrderPage';
 import Footer from './components/Footer';
 import UserListPage from './pages/admin/userListPage.jsx';
 import ProductListPage from './pages/admin/productListPage.jsx';
+import ProductEditPage from './pages/admin/ProductEditPage';
+import OrderListPage from './pages/admin/OrderListPage';
 
 const App = () => {
   return (
@@ -35,6 +37,8 @@ const App = () => {
             <Route path="/order/:id" element={<OrderPage />} />      {/* <-- ADD THIS */}
             <Route path="/admin/userlist" element={<UserListPage/>} />
             <Route path="/admin/productlist" element={<ProductListPage />} />
+            <Route path="/admin/product/:id/edit" element={<ProductEditPage />} />
+            <Route path="/admin/orderlist" element={<OrderListPage />} />
           </Route>
         </Routes>
 

@@ -3,13 +3,26 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Container from '../components/Container'; // <-- Import
+import { useSelector } from 'react-redux'; // <-- Import this
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Handler for marking as delivered
+  const deliverHandler = async () => {
+    try {
+      await axios.put(`/api/orders/${orderId}/deliver`, {});
+      // Reload page data to reflect changes
+      window.location.reload(); 
+    } catch (err) {
+      alert('Error updating order');
+    }
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -139,13 +152,17 @@ const OrderPage = () => {
             </div>
 
             {/* Payment button will go here */}
-            {!order.isPaid && (
-              <div className="mt-6">
-                <button className="w-full text-center py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500">
-                  Pay with PayPal (Placeholder)
-                </button>
-              </div>
-            )}
+            {/* Admin: Mark As Delivered Button */}
+  {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+    <div className="mt-4">
+      <button
+        onClick={deliverHandler}
+        className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-gray-900"
+      >
+        Mark As Delivered
+      </button>
+    </div>
+  )}
           </div>
         </div>
       </div>

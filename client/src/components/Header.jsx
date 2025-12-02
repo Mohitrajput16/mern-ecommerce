@@ -65,17 +65,24 @@ const Header = () => {
               )}
             </Link>
 
-            {userInfo && (
-              // User Dropdown
+            {/* ADMIN LINKS - Show only if user is admin */}
+            {userInfo && userInfo.isAdmin && (
+              <div className='flex space-x-4'>
+                <Link to="/admin/userlist" className="text-gray-300 hover:text-white">
+                  Users
+                </Link>
+                <Link to="/admin/productlist" className="text-gray-300 hover:text-white">
+                  Products
+                </Link>
+                <Link to="/admin/orderlist" className="text-gray-300 hover:text-white">
+                  Orders
+                </Link>
+              </div>
+            )}
+
+            {userInfo ? (
+              // User Dropdown (Logged In)
               <div className="relative">
-    {/* You can make this a dropdown later, for now just a link */}
-    <Link to="/admin/userlist" className="text-gray-300 hover:text-white">
-      Users
-    </Link>
-    {/* // Inside the admin check: */}
-<Link to="/admin/productlist" className="text-gray-300 hover:text-white ml-4">
-  Products
-</Link>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 p-2 text-gray-300 hover:text-white"
@@ -102,12 +109,13 @@ const Header = () => {
                   </div>
                 )}
               </div>
-            ) } 
+            ) : (
+              // Sign In Link (Logged Out)
               <Link to="/login" className="flex items-center space-x-2 p-2 text-gray-300 hover:text-white">
                 <FaUser className="h-6 w-6" />
                 <span>Sign In</span>
               </Link>
-            
+            )}
           </div>
 
           {/* Mobile-only Cart (to show it next to the hamburger) */}
@@ -127,6 +135,33 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
+              {/* ADMIN LINKS FOR MOBILE */}
+              {userInfo && userInfo.isAdmin && (
+                <>
+                  <Link
+                    to="/admin/userlist"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Admin: Users
+                  </Link>
+                  <Link
+                    to="/admin/productlist"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Admin: Products
+                  </Link>
+                  <Link
+                    to="/admin/orderlist"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Admin: Orders
+                  </Link>
+                </>
+              )}
+
               {userInfo ? (
                 <>
                   <Link
