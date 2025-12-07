@@ -86,10 +86,17 @@ const updateOrderToDelivered = async (req, res) => {
   }
 };
 
+const getMyOrders = async (req, res) => {
+  // Find orders where 'user' field matches the logged-in user's ID
+  const orders = await Order.find({ user: req.user._id });
+  res.json(orders);
+};
+
 // Export them
 export { 
   createOrder, 
-  getOrderById, 
+  getOrderById,
+  getMyOrders, 
   // createPaymentIntent, 
   getOrders, // <-- Add
   updateOrderToDelivered // <-- Add
