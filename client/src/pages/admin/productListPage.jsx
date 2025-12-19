@@ -1,13 +1,18 @@
 // client/src/pages/admin/ProductListPage.jsx
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom'; // <-- Import useParams
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Container from '../../components/Container';
+import Paginate from '../../components/Paginate'; // <-- Import Paginate
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const ProductListPage = () => {
+  const { pageNumber } = useParams(); // <-- Get page number from URL
+
   const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,8 +22,13 @@ const ProductListPage = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/products');
-      setProducts(data);
+      // Fetch specific page
+      const { data } = await axios.get(`/api/products?pageNumber=${pageNumber || 1}`);
+      
+      setProducts(data.products);
+      setPage(data.page);
+      setPages(data.pages);
+      
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -27,18 +37,18 @@ const ProductListPage = () => {
   };
 
   useEffect(() => {
-    if (!userInfo || !userInfo.isAdmin) {
-      navigate('/login');
-    } else {
+    if (userInfo && userInfo.isAdmin) {
       fetchProducts();
+    } else {
+      navigate('/login');
     }
-  }, [userInfo, navigate]);
+  }, [userInfo, navigate, pageNumber]); // <-- Add pageNumber dependency
 
   const deleteHandler = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await axios.delete(`/api/products/${id}`);
-        fetchProducts(); // Refresh list
+        fetchProducts();
       } catch (err) {
         alert('Failed to delete product');
       }
@@ -47,15 +57,15 @@ const ProductListPage = () => {
 
   const createProductHandler = async () => {
     try {
-      // 1. Call backend to create sample product
       const { data: createdProduct } = await axios.post('/api/products', {});
-      
-      // 2. Redirect user to the edit page for that new product
       navigate(`/admin/product/${createdProduct._id}/edit`);
     } catch (err) {
       alert(err.response ? err.response.data.message : err.message);
     }
   };
+
+  if (loading) return <Container><p>Loading...</p></Container>;
+  if (error) return <Container><p className="text-red-500">{error}</p></Container>;
 
   return (
     <Container>
@@ -69,7 +79,7 @@ const ProductListPage = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-6">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-gray-800 text-white">
             <tr>
@@ -105,6 +115,9 @@ const ProductListPage = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Render Pagination Buttons */}
+      <Paginate pages={pages} page={page} isAdmin={true} />
     </Container>
   );
 };

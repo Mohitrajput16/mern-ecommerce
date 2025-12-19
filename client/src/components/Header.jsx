@@ -6,6 +6,7 @@ import { logout } from '../store/authSlice';
 import axios from 'axios';
 import Container from './Container';
 import { FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa';
+import SearchBox from './Searchbox.jsx'
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -56,6 +57,10 @@ const Header = () => {
 
           {/* Right-side links (Cart, User, Login) */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Add SearchBox Here */}
+              <div className="mr-4">
+                <SearchBox />
+              </div>
             <Link to="/cart" className="relative p-2 text-gray-300 hover:text-white">
               <FaShoppingCart className="h-6 w-6" />
               {totalCartItems > 0 && (

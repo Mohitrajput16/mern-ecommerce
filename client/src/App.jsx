@@ -26,6 +26,9 @@ const App = () => {
       <main className="min-h-screen py-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/search/:keyword" element={<HomePage />} />
+          <Route path="/page/:pageNumber" element={<HomePage />} />
+          <Route path="/search/:keyword/page/:pageNumber" element={<HomePage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -38,7 +41,7 @@ const App = () => {
             <Route path="/order/:id" element={<OrderPage />} />      {/* <-- ADD THIS */}
             <Route path="/admin/userlist" element={<UserListPage/>} />
             <Route path="/admin/productlist" element={<ProductListPage />} />
-            <Route path="/admin/product/:id/edit" element={<ProductEditPage />} />
+            <Route path="/admin/productlist/:pageNumber" element={<ProductListPage />} />
             <Route path="/admin/orderlist" element={<OrderListPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>

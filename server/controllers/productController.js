@@ -4,13 +4,34 @@ import Product from '../models/productModel.js';
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
+// server/controllers/productController.js
+
+// @desc    Fetch all products
+// @route   GET /api/products
+// @access  Public
 const getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find({}); // Find all products
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
-  }
+  // 1. Pagination Setup
+  const pageSize = 4; // How many products per page?
+  const page = Number(req.query.pageNumber) || 1;
+
+  // 2. Search Logic (Regex)
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword, // Matches partial strings
+          $options: 'i', // Case insensitive
+        },
+      }
+    : {};
+
+  // 3. Query Database
+  const count = await Product.countDocuments({ ...keyword }); // Total items matching search
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  // 4. Send Response (Now an object, not just an array!)
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 };
 
 // @desc    Fetch a single product by ID
@@ -77,9 +98,12 @@ const updateProduct = async (req, res) => {
     countInStock,
   } = req.body;
 
+  console.log('1. Received Data:', req.body); // You already saw this
+
   const product = await Product.findById(req.params.id);
 
   if (product) {
+    // Assign values
     product.name = name;
     product.price = price;
     product.description = description;
@@ -88,8 +112,18 @@ const updateProduct = async (req, res) => {
     product.category = category;
     product.countInStock = countInStock;
 
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
+    console.log('2. Product before save:', product); // Is the name changed here?
+
+    try {
+      const updatedProduct = await product.save();
+      console.log('3. Save Successful:', updatedProduct); // Did Mongo confirm the save?
+      res.json(updatedProduct);
+    } catch (error) {
+      console.error('4. Save FAILED:', error.message); // Did validation fail?
+      res.status(400); // Bad request
+      throw new Error(error.message);
+    }
+    
   } else {
     res.status(404);
     throw new Error('Product not found');
