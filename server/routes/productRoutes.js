@@ -9,10 +9,17 @@ import {
   updateProduct,
 } from '../controllers/productController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
+import {
+  getCategories, 
+} from '../controllers/productController.js';
+
+
 // Route for getting all products
 router.route('/')
 .get(getAllProducts)
 .post(protect, admin, createProduct); // <-- POST to create
+
+router.route('/categories').get(getCategories);
 
 router
   .route('/:id')

@@ -10,27 +10,41 @@ import Product from '../models/productModel.js';
 // @route   GET /api/products
 // @access  Public
 const getAllProducts = async (req, res) => {
-  // 1. Pagination Setup
-  const pageSize = 4; // How many products per page?
+  const pageSize = 6;
   const page = Number(req.query.pageNumber) || 1;
 
-  // 2. Search Logic (Regex)
+  // 1. Keyword Search
   const keyword = req.query.keyword
     ? {
         name: {
-          $regex: req.query.keyword, // Matches partial strings
-          $options: 'i', // Case insensitive
+          $regex: req.query.keyword,
+          $options: 'i',
         },
       }
     : {};
 
-  // 3. Query Database
-  const count = await Product.countDocuments({ ...keyword }); // Total items matching search
-  const products = await Product.find({ ...keyword })
+  // 2. Category Filter (exact match)
+  const category = req.query.category 
+    ? { category: req.query.category } 
+    : {};
+
+  // 3. Price Filter (range)
+  const priceFilter = {};
+  if (req.query.minPrice || req.query.maxPrice) {
+    priceFilter.price = {
+      $gte: Number(req.query.minPrice) || 0, // Greater than or equal
+      $lte: Number(req.query.maxPrice) || 1000000, // Less than or equal
+    };
+  }
+
+  // Combine all filters into one object
+  const finalQuery = { ...keyword, ...category, ...priceFilter };
+
+  const count = await Product.countDocuments(finalQuery);
+  const products = await Product.find(finalQuery)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
-  // 4. Send Response (Now an object, not just an array!)
   res.json({ products, page, pages: Math.ceil(count / pageSize) });
 };
 
@@ -130,11 +144,18 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const getCategories = async (req, res) => {
+  // .distinct() finds all unique values for the 'category' field
+  const categories = await Product.find({}).distinct('category');
+  res.json(categories);
+};
+
 // Export them at the bottom
 export { 
   getAllProducts, 
   getProductById, 
   deleteProduct, 
   createProduct, // <-- Add
-  updateProduct  // <-- Add
+  updateProduct,
+  getCategories  // <-- Add
 };

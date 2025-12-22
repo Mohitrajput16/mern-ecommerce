@@ -1,76 +1,72 @@
-// client/src/pages/HomePage.jsx
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // <-- Import useParams
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import Container from '../components/Container';
-import Paginate from '../components/Paginate'; // <-- Import Paginate
 
 const HomePage = () => {
-  const [products, setProducts] = useState([]);
-  const [page, setPage] = useState(1);       // <-- State for current page
-  const [pages, setPages] = useState(1);     // <-- State for total pages
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Get keyword and pageNumber from URL
-  const { keyword, pageNumber } = useParams();
+  const [latestProducts, setLatestProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        // Build the query string based on whether keyword or pageNumber exists
-        let url = `/api/products?pageNumber=${pageNumber || 1}`;
-        if (keyword) {
-          url += `&keyword=${keyword}`;
-        }
-
-        const { data } = await axios.get(url);
-        
-        // Update state based on new API response structure
-        setProducts(data.products);
-        setPage(data.page);
-        setPages(data.pages);
-        
-        setLoading(false);
-      } catch (err) {
-        setError('Error fetching products');
-        setLoading(false);
-        console.error(err);
-      }
+    const fetchLatest = async () => {
+      // Just fetch page 1 to get the latest items
+      const { data } = await axios.get('/api/products?pageNumber=1');
+      // Take only the first 4 items for the homepage display
+      setLatestProducts(data.products.slice(0, 4));
     };
-
-    fetchProducts();
-  }, [keyword, pageNumber]); // <-- Re-run when URL params change
+    fetchLatest();
+  }, []);
 
   return (
-    <Container>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        {keyword ? `Search Results for "${keyword}"` : 'Latest Products'}
-      </h1>
-      
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
+    <div>
+      {/* 1. Hero Banner */}
+      <Hero />
+
+      <Container>
+        {/* 2. Featured Section Title */}
+        <div className="flex justify-between items-end mb-6 mt-12 border-b border-gray-200 pb-4">
+          <h2 className="text-2xl font-bold text-gray-900">Latest Arrivals</h2>
+          <Link to="/shop" className="text-indigo-600 hover:text-indigo-800 font-medium">
+            View All &rarr;
+          </Link>
+        </div>
+
+        {/* 3. Product Grid (Limited) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {latestProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+
+        {/* 4. Features/Trust Section */}
+        <div className="py-16 mt-16 border-t border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="bg-indigo-100 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4">
+                <span className="text-2xl">🚀</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Fast Delivery</h3>
+              <p className="text-gray-600">Get your gear in record time.</p>
+            </div>
+            <div>
+              <div className="bg-indigo-100 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4">
+                <span className="text-2xl">🛡️</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Secure Payment</h3>
+              <p className="text-gray-600">100% secure payment gateways.</p>
+            </div>
+            <div>
+              <div className="bg-indigo-100 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4">
+                <span className="text-2xl">↩️</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Easy Returns</h3>
+              <p className="text-gray-600">Not satisfied? Return it easily.</p>
+            </div>
           </div>
-          
-          {/* Add Pagination Component at the bottom */}
-          <Paginate 
-            pages={pages} 
-            page={page} 
-            keyword={keyword ? keyword : ''} 
-          />
-        </>
-      )}
-    </Container>
+        </div>
+      </Container>
+    </div>
   );
 };
 

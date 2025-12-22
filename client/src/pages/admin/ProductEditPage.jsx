@@ -21,6 +21,26 @@ const ProductEditPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+const uploadFileHandler = async (e) => {
+  const file = e.target.files[0];
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const { data } = await axios.post('/api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    // IMPORTANT: Cloudinary returns { imageUrl }
+    setImage(data.imageUrl);
+  } catch (error) {
+    console.error(error);
+    alert('File upload failed');
+  }
+};
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -99,17 +119,31 @@ const ProductEditPage = () => {
             />
           </div>
 
-          {/* Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Image URL</label>
-            <input
-              type="text"
-              placeholder="Enter image url"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
+          {/* Image Input Section */}
+<div>
+  <label className="block text-sm font-medium text-gray-700">Image</label>
+
+  {/* 1. Text Input (displays the path) */}
+  <input
+    type="text"
+    placeholder="Enter image url"
+    value={image}
+    onChange={(e) => setImage(e.target.value)}
+    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-2"
+  />
+
+  {/* 2. File Upload Input */}
+  <input
+    type="file"
+    onChange={uploadFileHandler}
+    className="block w-full text-sm text-gray-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-full file:border-0
+      file:text-sm file:font-semibold
+      file:bg-indigo-50 file:text-indigo-700
+      hover:file:bg-indigo-100"
+  />
+</div>
 
           {/* Brand */}
           <div>

@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
+import ProductsPage from './pages/ProductPage';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import Header from './components/Header.jsx';
@@ -26,10 +27,17 @@ const App = () => {
       <main className="min-h-screen py-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search/:keyword" element={<HomePage />} />
-          <Route path="/page/:pageNumber" element={<HomePage />} />
-          <Route path="/search/:keyword/page/:pageNumber" element={<HomePage />} />
+
+          <Route path="/shop" element={<ProductsPage />} />
+          <Route path="/search/:keyword" element={<ProductsPage />} />
+          <Route path="/page/:pageNumber" element={<ProductsPage />} />
+          <Route path="/search/:keyword/page/:pageNumber" element={<ProductsPage />} />
+
           <Route path="/product/:id" element={<ProductPage />} />
+          {/* <Route path="/search/:keyword" element={<HomePage />} />
+          <Route path="/page/:pageNumber" element={<HomePage />} />
+          <Route path="/search/:keyword/page/:pageNumber" element={<HomePage />} /> */}
+          {/* <Route path="/product/:id" element={<ProductPage />} /> */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/cart" element={<CartPage />} />
@@ -44,6 +52,7 @@ const App = () => {
             <Route path="/admin/productlist/:pageNumber" element={<ProductListPage />} />
             <Route path="/admin/orderlist" element={<OrderListPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/admin/product/:id/edit" element={<ProductEditPage />} />
           </Route>
         </Routes>
 
