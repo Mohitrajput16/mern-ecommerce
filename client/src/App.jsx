@@ -2,8 +2,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import ProductPage from './pages/ProductPage';
-import ProductsPage from './pages/ProductPage';
+import ProductPage from './pages/ProductPage.jsx';
+import ProductsPage from './pages/ProductsPage';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import Header from './components/Header.jsx';
@@ -19,12 +19,13 @@ import ProductListPage from './pages/admin/productListPage.jsx';
 import ProductEditPage from './pages/admin/ProductEditPage';
 import OrderListPage from './pages/admin/OrderListPage';
 import ProfilePage from './pages/ProfilePage';
+import AboutPage from './pages/AboutPage.jsx';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Header />
-      <main className="min-h-screen py-6">
+      <main className="min-h-screen ">
         <Routes>
           <Route path="/" element={<HomePage />} />
 
@@ -32,6 +33,8 @@ const App = () => {
           <Route path="/search/:keyword" element={<ProductsPage />} />
           <Route path="/page/:pageNumber" element={<ProductsPage />} />
           <Route path="/search/:keyword/page/:pageNumber" element={<ProductsPage />} />
+
+          <Route path='/about' element={<AboutPage/>}/>
 
           <Route path="/product/:id" element={<ProductPage />} />
           {/* <Route path="/search/:keyword" element={<HomePage />} />

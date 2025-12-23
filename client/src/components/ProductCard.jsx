@@ -19,9 +19,8 @@ const ProductCard = ({ product }) => {
       <Link to={`/product/${product._id}`}>
         {/* Placeholder for image */}
         <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-500">Image</span>
+        <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
         </div>
-        {/* <img src={product.image} alt={product.name} className="w-full h-48 object-cover" /> */}
       </Link>
       <div className="p-4">
         <Link to={`/product/${product._id}`}>

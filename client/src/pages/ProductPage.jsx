@@ -1,155 +1,119 @@
-// client/src/pages/ProductsPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/cartSlice';
 import axios from 'axios';
-import ProductCard from '../components/ProductCard';
 import Container from '../components/Container';
-import Paginate from '../components/Paginate';
 
-const ProductsPage = () => {
-  const [products, setProducts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
+// Simple Rating Component
+const Rating = ({ value, text }) => (
+  <div className="flex items-center mb-4">
+    <span className="text-yellow-500 text-lg">{'★'.repeat(Math.round(value || 0))}</span>
+    <span className="text-gray-400 text-lg">{'★'.repeat(5 - Math.round(value || 0))}</span>
+    <span className="text-gray-600 text-sm ml-2">{text && text}</span>
+  </div>
+);
+
+const ProductPage = () => {
+  const [product, setProduct] = useState(null);
+  const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter States
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-
-  const { keyword, pageNumber } = useParams();
+  const { id: productId } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 1. Fetch Categories
   useEffect(() => {
-    const fetchCategories = async () => {
-      const { data } = await axios.get('/api/products/categories');
-      setCategories(data);
-    };
-    fetchCategories();
-  }, []);
-
-  // 2. Fetch Products
-  useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProduct = async () => {
       try {
         setLoading(true);
-        let url = `/api/products?pageNumber=${pageNumber || 1}`;
-        
-        if (keyword) url += `&keyword=${keyword}`;
-        if (category) url += `&category=${category}`;
-        if (minPrice) url += `&minPrice=${minPrice}`;
-        if (maxPrice) url += `&maxPrice=${maxPrice}`;
-
-        const { data } = await axios.get(url);
-        
-        setProducts(data.products);
-        setPage(data.page);
-        setPages(data.pages);
+        const { data } = await axios.get(`/api/products/${productId}`);
+        setProduct(data);
         setLoading(false);
       } catch (err) {
-        setError('Error fetching products');
+        setError('Product not found');
         setLoading(false);
       }
     };
+    fetchProduct();
+  }, [productId]);
 
-    const timeoutId = setTimeout(() => {
-      fetchProducts();
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-
-  }, [keyword, pageNumber, category, minPrice, maxPrice]);
-
-  const clearFiltersHandler = () => {
-    setCategory('');
-    setMinPrice('');
-    setMaxPrice('');
-    navigate('/shop'); // Navigate to shop, not home
+  const addToCartHandler = () => {
+    dispatch(addToCart({ ...product, qty }));
+    navigate('/cart');
   };
+
+  if (loading) return <Container><div className="text-center py-10">Loading...</div></Container>;
+  if (error) return <Container><div className="text-red-500 text-center py-10">{error}</div></Container>;
 
   return (
     <Container>
-      <div className="flex flex-col md:flex-row gap-8 mt-8">
-        
-        {/* LEFT SIDEBAR */}
-        <div className="w-full md:w-1/4">
-          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <h3 className="text-lg font-bold mb-4 border-b pb-2">Filters</h3>
+      <Link to="/shop" className="text-gray-600 hover:text-indigo-600 mb-6 inline-block font-medium">
+        &larr; Back to Shop
+      </Link>
+      
+      {product && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Image Column */}
+          <div>
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full rounded-xl shadow-lg border border-gray-100" 
+            />
+          </div>
+
+          {/* Details Column */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            <Rating value={product.rating} text={`${product.numReviews} reviews`} />
             
-            <div className="mb-6">
-              <h4 className="font-semibold mb-2">Category</h4>
-              <select 
-                value={category} 
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                <option value="">All Categories</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
+            <p className="text-4xl font-bold text-gray-900 mb-6">${product.price}</p>
+            
+            <p className="text-gray-600 leading-relaxed mb-8 border-b border-gray-200 pb-8">
+              {product.description}
+            </p>
 
-            <div className="mb-6">
-              <h4 className="font-semibold mb-2">Price Range</h4>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-1/2 border-gray-300 rounded-md px-2 py-1"
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-1/2 border-gray-300 rounded-md px-2 py-1"
-                />
+            {/* Add to Cart Box */}
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-semibold text-gray-700">Status:</span>
+                <span className={product.countInStock > 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
+                  {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
+                </span>
               </div>
-            </div>
 
-            <button
-              onClick={clearFiltersHandler}
-              className="w-full bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 transition"
-            >
-              Clear Filters
-            </button>
+              {product.countInStock > 0 && (
+                <div className="flex justify-between items-center mb-6">
+                  <label className="font-semibold text-gray-700">Quantity:</label>
+                  <select
+                    value={qty}
+                    onChange={(e) => setQty(Number(e.target.value))}
+                    className="border-gray-300 rounded-md shadow-sm p-2 w-20 text-center"
+                  >
+                    {[...Array(product.countInStock).keys()].map((x) => (
+                      <option key={x + 1} value={x + 1}>
+                        {x + 1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <button
+                onClick={addToCartHandler}
+                disabled={product.countInStock === 0}
+                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {product.countInStock === 0 ? 'Out Of Stock' : 'Add To Cart'}
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* RIGHT SIDE: PRODUCT GRID */}
-        <div className="w-full md:w-3/4">
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : products.length === 0 ? (
-             <div className="text-center py-10">
-               <p className="text-xl text-gray-500">No products found.</p>
-             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
-              <Paginate 
-                pages={pages} 
-                page={page} 
-                keyword={keyword ? keyword : ''} 
-              />
-            </>
-          )}
-        </div>
-      </div>
+      )}
     </Container>
   );
 };
 
-export default ProductsPage;
+export default ProductPage;

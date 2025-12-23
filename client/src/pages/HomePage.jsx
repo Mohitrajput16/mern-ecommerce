@@ -1,3 +1,4 @@
+// client/src/pages/HomePage.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -10,9 +11,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchLatest = async () => {
-      // Just fetch page 1 to get the latest items
       const { data } = await axios.get('/api/products?pageNumber=1');
-      // Take only the first 4 items for the homepage display
       setLatestProducts(data.products.slice(0, 4));
     };
     fetchLatest();
@@ -32,15 +31,45 @@ const HomePage = () => {
           </Link>
         </div>
 
-        {/* 3. Product Grid (Limited) */}
+        {/* 3. Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {latestProducts.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
 
+        {/* --- NEW SECTION: PROMO BANNER --- */}
+        <div className="bg-indigo-900 rounded-2xl p-8 md:p-16 text-center text-white my-20 relative overflow-hidden">
+            {/* Background decoration circle */}
+            <div className="absolute top-0 left-0 -mt-10 -ml-10 w-40 h-40 bg-indigo-700 rounded-full opacity-50 blur-2xl"></div>
+            
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+                Unlock 20% Off Your First Order
+              </h2>
+              <p className="text-indigo-200 mb-8 max-w-2xl mx-auto text-lg">
+                Join our community of developers and tech enthusiasts. Sign up today to get exclusive deals, early access to new drops, and expert reviews.
+              </p>
+              <div className="flex justify-center gap-4">
+                <Link 
+                  to="/register" 
+                  className="bg-white text-indigo-900 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg"
+                >
+                  Join Now
+                </Link>
+                <Link 
+                  to="/shop" 
+                  className="border border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-indigo-900 transition"
+                >
+                  Shop Now
+                </Link>
+              </div>
+            </div>
+        </div>
+        {/* ---------------------------------- */}
+
         {/* 4. Features/Trust Section */}
-        <div className="py-16 mt-16 border-t border-gray-100">
+        <div className="py-16 border-t border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="bg-indigo-100 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4">
