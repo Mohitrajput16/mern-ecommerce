@@ -34,9 +34,9 @@ const Header = () => {
   const totalCartItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   return (
-    <nav className="bg-gray-800 text-white shadow-lg">
+    <nav className=" bg-indigo-800 text-white shadow-lg">
       <Container>
-        <div className="relative flex h-16 items-center justify-between">
+        <div className="relative flex h-18 items-center justify-between">
           {/* Mobile menu button */}
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
             <button
@@ -58,7 +58,7 @@ const Header = () => {
           {/* Right-side links (Cart, User, Login) */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Add SearchBox Here */}
-              <div className="mr-4">
+              <div className="mr-8">
                 <SearchBox />
               </div>
 

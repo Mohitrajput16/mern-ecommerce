@@ -23,11 +23,11 @@ const SearchBox = () => {
         name="q"
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="Search Products..."
-        className="border border-gray-300 rounded-l-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="border border-white-300 rounded-l-lg px-18 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
       <button
         type="submit"
-        className="bg-indigo-600 text-white px-4 py-3 rounded-r-md hover:bg-indigo-700"
+        className="bg-indigo-600 text-white px-4 py-4 rounded-r-lg hover:bg-indigo-700"
       >
         <FaSearch />
       </button>

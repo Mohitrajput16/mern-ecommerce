@@ -37,7 +37,7 @@ const RegisterPage = () => {
         <div>
           <label 
             htmlFor="name" 
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700"
           >
             Name
           </label>
@@ -47,14 +47,14 @@ const RegisterPage = () => {
             placeholder="Enter name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block h-8 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
           <label 
             htmlFor="email" 
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700"
           >
             Email Address
           </label>
@@ -64,14 +64,14 @@ const RegisterPage = () => {
             placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block h-8 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
           <label 
             htmlFor="password" 
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700"
           >
             Password
           </label>
@@ -81,14 +81,14 @@ const RegisterPage = () => {
             placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block h-8 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
         <div>
           <label 
             htmlFor="confirmPassword" 
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700"
           >
             Confirm Password
           </label>
@@ -98,7 +98,7 @@ const RegisterPage = () => {
             placeholder="Confirm password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block h-8 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             required
           />
         </div>
@@ -110,7 +110,7 @@ const RegisterPage = () => {
         </button>
       </form>
       <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-lg text-gray-600">
           Have an Account?{' '}
           <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
             Login

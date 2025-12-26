@@ -67,9 +67,9 @@ const ProfilePage = () => {
 
   return (
     <Container>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-10 ">
         {/* Left Column: User Details Form */}
-        <div className="md:col-span-1">
+        <div className="md:col-span-3 border rounded-xl p-5  ">
           <h2 className="text-2xl font-bold mb-4">User Profile</h2>
           {message && (
             <div className={`p-3 rounded mb-4 ${message.includes('Success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -127,7 +127,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Right Column: Order History */}
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 border rounded-xl p-5">
           <h2 className="text-2xl font-bold mb-4">My Orders</h2>
           {loadingOrders ? (
             <p>Loading Orders...</p>
