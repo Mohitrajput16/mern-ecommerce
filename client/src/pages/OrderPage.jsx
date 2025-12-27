@@ -23,7 +23,18 @@ const OrderPage = () => {
       alert('Error updating order');
     }
   };
-
+const cancelOrderHandler = async () => {
+   if (window.confirm('Are you sure you want to cancel this order?')) {
+     try {
+       await axios.put(`/api/orders/${order._id}/cancel`, {}, {
+         headers: { Authorization: `Bearer ${userInfo.token}` },
+       });
+       window.location.reload(); // Refresh to see changes
+     } catch (err) {
+       alert(err.response?.data?.message || err.message);
+     }
+   }
+};
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -150,7 +161,21 @@ const OrderPage = () => {
                 <span>₹{order.totalPrice}</span>
               </div>
             </div>
+            {!order.isCancelled && !order.isDelivered && (
+  <button
+    onClick={cancelOrderHandler}
+    className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition mt-4"
+  >
+    Cancel Order
+  </button>
+)}
 
+{/* Show Cancelled Badge if true */}
+{order.isCancelled && (
+  <div className="bg-red-100 text-red-700 p-3 rounded mt-4 text-center font-bold">
+    This order has been cancelled on {order.cancelledAt?.substring(0, 10)}
+  </div>
+)}
             {/* Payment button will go here */}
             {/* Admin: Mark As Delivered Button */}
   {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (

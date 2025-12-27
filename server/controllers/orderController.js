@@ -85,7 +85,26 @@ const updateOrderToDelivered = async (req, res) => {
     throw new Error('Order not found');
   }
 };
+const updateOrderToCancelled = async (req, res) => {
+  const order = await Order.findById(req.params.id);
 
+  if (order) {
+    // Check if it's already delivered
+    if (order.isDelivered) {
+      res.status(400);
+      throw new Error('Cannot cancel an order that has explicitly been delivered');
+    }
+
+    order.isCancelled = true;
+    order.cancelledAt = Date.now();
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+};
 const getMyOrders = async (req, res) => {
   // Find orders where 'user' field matches the logged-in user's ID
   const orders = await Order.find({ user: req.user._id });
@@ -97,7 +116,7 @@ export {
   createOrder, 
   getOrderById,
   getMyOrders, 
-  // createPaymentIntent, 
+  updateOrderToCancelled,
   getOrders, // <-- Add
   updateOrderToDelivered // <-- Add
 };
