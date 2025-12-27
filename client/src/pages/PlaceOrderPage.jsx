@@ -86,7 +86,7 @@ const PlaceOrderPage = () => {
                   <div key={index} className="flex items-center justify-between py-4">
                     <div className="flex items-center space-x-4">
                       <div className="w-16 h-16 bg-gray-200 rounded-md flex-shrink-0">
-                        {/* <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" /> */}
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" />
                       </div>
                       <div>
                         <Link to={`/product/${item._id}`} className="font-medium text-gray-900 hover:text-indigo-600">
@@ -96,7 +96,7 @@ const PlaceOrderPage = () => {
                     </div>
                     <div className="text-gray-700">
                       {item.qty} x ${item.price.toFixed(2)} = 
-                      <span className="font-semibold text-gray-900"> ${addDecimals(item.qty * item.price)}</span>
+                      <span className="font-semibold text-gray-900"> ₹{addDecimals(item.qty * item.price)}</span>
                     </div>
                   </div>
                 ))}
@@ -126,7 +126,7 @@ const PlaceOrderPage = () => {
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t mt-2">
                 <span>Total:</span>
-                <span>${totalPrice}</span>
+                <span>₹{totalPrice}</span>
               </div>
             </div>
             <button

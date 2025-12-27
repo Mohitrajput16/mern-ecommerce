@@ -55,7 +55,7 @@ const CartPage = () => {
                 >
                   {/* Image (placeholder) */}
                   <div className="w-20 h-20 bg-gray-200 rounded-md flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
-                    {/* <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" /> */}
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" />
                   </div>
 
                   {/* Name */}
@@ -71,7 +71,7 @@ const CartPage = () => {
 
                   {/* Price */}
                   <div className="w-full sm:w-auto sm:mx-4 mb-2 sm:mb-0">
-                    <p className="text-lg font-semibold text-gray-900">${item.price.toFixed(2)}</p>
+                    <p className="text-lg font-semibold text-gray-900">₹{item.price.toFixed(2)}</p>
                   </div>
 
                   {/* Quantity Selector */}

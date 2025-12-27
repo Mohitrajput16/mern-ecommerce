@@ -108,7 +108,7 @@ const OrderPage = () => {
                 <div key={index} className="flex items-center justify-between py-4">
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-200 rounded-md flex-shrink-0">
-                      {/* <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" /> */}
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md" />
                     </div>
                     <div>
                       <Link to={`/product/${item.product}`} className="font-medium text-gray-900 hover:text-indigo-600">
@@ -117,8 +117,8 @@ const OrderPage = () => {
                     </div>
                   </div>
                   <div className="text-gray-700">
-                    {item.qty} x ${item.price.toFixed(2)} = 
-                    <span className="font-semibold text-gray-900"> ${addDecimals(item.qty * item.price)}</span>
+                    {item.qty} x ₹{item.price.toFixed(2)} = 
+                    <span className="font-semibold text-gray-900"> ₹{addDecimals(item.qty * item.price)}</span>
                   </div>
                 </div>
               ))}
@@ -135,19 +135,19 @@ const OrderPage = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-700">Items:</span>
-                <span className="font-medium text-gray-900">${itemsPrice}</span>
+                <span className="font-medium text-gray-900">₹{itemsPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700">Shipping:</span>
-                <span className="font-medium text-gray-900">${order.shippingPrice}</span>
+                <span className="font-medium text-gray-900">₹{order.shippingPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700">Tax:</span>
-                <span className="font-medium text-gray-900">${order.taxPrice}</span>
+                <span className="font-medium text-gray-900">₹{order.taxPrice}</span>
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t mt-2">
                 <span>Total:</span>
-                <span>${order.totalPrice}</span>
+                <span>₹{order.totalPrice}</span>
               </div>
             </div>
 

@@ -31,7 +31,7 @@ const ProductCard = ({ product }) => {
         <div className="my-2">
           <Rating value={product.rating} text={`${product.numReviews} reviews`} />
         </div>
-        <p className="text-2xl font-bold text-gray-900">${product.price}</p>
+        <p className="text-2xl font-bold text-gray-900">₹{product.price}</p>
       </div>
     </div>
   );

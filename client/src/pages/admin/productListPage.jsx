@@ -96,7 +96,7 @@ const ProductListPage = () => {
               <tr key={product._id} className="hover:bg-gray-50">
                 <td className="py-3 px-4 text-sm text-gray-700">{product._id}</td>
                 <td className="py-3 px-4 text-sm text-gray-700">{product.name}</td>
-                <td className="py-3 px-4 text-sm text-gray-700">${product.price}</td>
+                <td className="py-3 px-4 text-sm text-gray-700">₹{product.price}</td>
                 <td className="py-3 px-4 text-sm text-gray-700">{product.category}</td>
                 <td className="py-3 px-4 text-sm text-gray-700">{product.brand}</td>
                 <td className="py-3 px-4 text-sm flex space-x-3">
