@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       // All requests starting with /api will be proxied
       '/api': {
-        target: 'http://localhost:5000', // Your backend server
+        target: 'http://host.docker.internal:5000', // Your backend server
         changeOrigin: true,
         secure: false,
       },

@@ -1,0 +1,25 @@
+services:
+  # 1. The Backend Service
+  api:
+    build: ./server
+    container_name: mern-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    # Removed 'depends_on' because we are connecting to Atlas, not a local container
+
+  # 2. The Frontend Service
+  
+  client:
+    build: ./client
+    container_name: mern-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://api:5000
+    depends_on:
+      - api
+    volumes:
+      # This allows you to edit files on your laptop and see changes instantly
+      - ./client/src:/app/src
