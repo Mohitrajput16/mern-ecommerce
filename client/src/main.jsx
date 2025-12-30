@@ -9,6 +9,11 @@ import { Provider } from 'react-redux';
 import store from './store/store.js';
 // --- End Imports ---
 
+import axios from 'axios';
+import { BASE_URL } from './constants';
+
+axios.defaults.baseURL = BASE_URL;
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/* Wrap your entire App in the Provider */}
