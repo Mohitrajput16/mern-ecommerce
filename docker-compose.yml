@@ -10,7 +10,7 @@ services:
     # Removed 'depends_on' because we are connecting to Atlas, not a local container
 
   # 2. The Frontend Service
-  
+    
   client:
     build: ./client
     container_name: mern-frontend
