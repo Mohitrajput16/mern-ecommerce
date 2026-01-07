@@ -18,7 +18,7 @@ import UserListPage from './pages/admin/userListPage.jsx';
 import ProductListPage from './pages/admin/productListPage.jsx';
 import ProductEditPage from './pages/admin/ProductEditPage';
 import OrderListPage from './pages/admin/OrderListPage';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/Profilepage';
 import AboutPage from './pages/AboutPage.jsx';
 
 const App = () => {
