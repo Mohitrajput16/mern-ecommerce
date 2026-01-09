@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Container from '../components/Container';
 import { setCredentials } from '../store/authSlice'; // Adjust path if needed
+import { toast } from 'react-toastify';
 
 const ProfilePage = () => {
   const [name, setName] = useState('');
