@@ -7,12 +7,17 @@ import cookieParser from 'cookie-parser';
 import orderRoutes from './routes/orderRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import cors from 'cors'; 
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+app.use(cors({
+  origin: 'https://mern-ecommerce-hguc.vercel.app', // Your Vercel URL (NO trailing slash)
+  credentials: true
+}));
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
