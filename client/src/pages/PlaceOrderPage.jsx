@@ -31,23 +31,41 @@ const PlaceOrderPage = () => {
     Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)
   );
 
-  const placeOrderHandler = async () => {
-    try {
-      const res = await axios.post('/api/orders', {
-        orderItems: cartItems,
-        shippingAddress: shippingAddress,
-        paymentMethod: paymentMethod,
-        itemsPrice: itemsPrice,
-        shippingPrice: shippingPrice,
-        taxPrice: taxPrice,
-        totalPrice: totalPrice,
-      });
-      dispatch(clearCartItems());
-      navigate(`/order/${res.data._id}`);
-    } catch (error) {
-      console.error('Failed to place order:', error);
-    }
-  };
+  // Inside PlaceOrderPage.jsx
+
+const placeOrderHandler = async () => {
+  try {
+    // 1. Create the Config with Token
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`, // <--- CRITICAL MISSING PIECE
+      },
+    };
+
+    // 2. Send the Request with Config
+    const { data } = await axios.post(
+      '/api/orders',
+      {
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      },
+      config // <--- Pass it here as the 3rd argument
+    );
+
+    // 3. Success logic
+    dispatch(clearCartItems());
+    navigate(`/order/${data._id}`);
+    
+  } catch (err) {
+    toast.error(err.response?.data?.message || err.message);
+  }
+};
 
   return (
     <Container>
