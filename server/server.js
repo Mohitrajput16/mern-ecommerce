@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: 'https://mern-ecommerce-hguc.vercel.app', // Your Vercel URL (NO trailing slash)
+  origin: 'https://mern-ecommerce-beryl-ten.vercel.app', // <--- Update this to the new link
   credentials: true
 }));
 // Body parsers
