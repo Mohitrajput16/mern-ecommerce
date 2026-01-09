@@ -1,81 +1,76 @@
+// client/src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux'; // <-- Import this
 import axios from 'axios';
 import Container from '../components/Container';
-import { setCredentials } from '../store/authSlice'; // Adjust path if needed
 import { toast } from 'react-toastify';
+import { setCredentials } from '../store/authSlice'; // Adjust path if needed
 
 const ProfilePage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState(null);
-
-  // State for Orders
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]); // State for orders
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [ordersError, setOrdersError] = useState(null);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  // 1. Check if user is logged in
   useEffect(() => {
     if (!userInfo) {
       navigate('/login');
     } else {
       setName(userInfo.name);
       setEmail(userInfo.email);
+      fetchMyOrders(); // Call the fetch function
     }
-  }, [navigate, userInfo]);
+  }, [userInfo, navigate]);
 
-  // 2. Fetch User's Orders
-  useEffect(() => {
-    const fetchMyOrders = async () => {
-      try {
-        // <--- 3. Create Config with Token
-        const config = {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        };
+  // --- FUNCTION TO FETCH ORDERS WITH TOKEN ---
+  const fetchMyOrders = async () => {
+    try {
+      setLoadingOrders(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`, // <--- CRITICAL FIX
+        },
+      };
 
-        // <--- 4. Pass config to the GET request
-        const { data } = await axios.get('/api/orders/myorders', config);
-        
-        setOrders(data);
-      } catch (err) {
-        toast.error(err.response?.data?.message || err.message);
-      }
-    };
-
-    if (userInfo) {
-      fetchMyOrders();
+      const { data } = await axios.get('/api/orders/myorders', config);
+      setOrders(data);
+      setLoadingOrders(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || err.message);
+      setLoadingOrders(false);
     }
-  }, [userInfo]);
+  };
+  // -------------------------------------------
 
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
+      toast.error('Passwords do not match');
     } else {
       try {
         const config = {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`, // Token needed for update too
+          },
         };
-        const { data } = await axios.put(
+        const res = await axios.put(
           '/api/users/profile',
           { name, email, password },
           config
         );
-        dispatch(setCredentials({ ...data, token: userInfo.token }));
-        setMessage('Profile Updated Successfully');
+        dispatch(setCredentials({ ...res.data }));
+        toast.success('Profile Updated');
       } catch (err) {
-        setMessage(err.response?.data?.message || err.message);
+        toast.error(err.response?.data?.message || err.message);
       }
     }
   };
@@ -83,119 +78,100 @@ const ProfilePage = () => {
   return (
     <Container>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
-
-        {/* LEFT COL: User Profile Form */}
+        {/* Column 1: User Profile Form */}
         <div className="md:col-span-1">
           <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-          {message && <div className="bg-blue-100 text-blue-700 p-3 rounded mb-4">{message}</div>}
-
-          <form onSubmit={submitHandler}>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Name</label>
+          <form onSubmit={submitHandler} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
               <input
                 type="text"
-                className="w-full border rounded p-2"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Email Address</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email Address</label>
               <input
                 type="email"
-                className="w-full border rounded p-2"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Password</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
               <input
                 type="password"
-                className="w-full border rounded p-2"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Confirm Password</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
               <input
                 type="password"
-                className="w-full border rounded p-2"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm password"
               />
             </div>
-            <button type="submit" className="bg-gray-800 text-white py-2 px-4 rounded w-full hover:bg-gray-700">
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition"
+            >
               Update
             </button>
           </form>
         </div>
 
-        {/* RIGHT COL: My Orders Table */}
+        {/* Column 2: My Orders List */}
         <div className="md:col-span-3">
           <h2 className="text-2xl font-bold mb-4">My Orders</h2>
-
           {loadingOrders ? (
             <p>Loading orders...</p>
-          ) : ordersError ? (
-            <p className="text-red-500">{ordersError}</p>
           ) : orders.length === 0 ? (
-            <div className="bg-gray-100 p-4 rounded text-center">
-              You have no orders yet. <Link to="/shop" className="text-indigo-600 underline">Go Shop!</Link>
-            </div>
+             <div className="bg-blue-50 text-blue-700 p-4 rounded">
+               You have no orders yet.
+             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200">
-                <thead>
-                  <tr className="bg-gray-100 border-b">
-                    <th className="py-2 px-4 text-left">ID</th>
-                    <th className="py-2 px-4 text-left">DATE</th>
-                    <th className="py-2 px-4 text-left">TOTAL</th>
-                    <th className="py-2 px-4 text-left">PAID</th>
-                    <th className="py-2 px-4 text-left">DELIVERED</th>
-                    <th className="py-2 px-4 text-left">DETAILS</th>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DATE</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PAID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DELIVERED</th>
+                    <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white divide-y divide-gray-200">
                   {orders.map((order) => (
-                    <tr key={order._id} className="border-b hover:bg-gray-50">
-                      <td className="py-2 px-4">{order._id.substring(0, 10)}...</td>
-                      <td className="py-2 px-4">{order.createdAt.substring(0, 10)}</td>
-                      <td className="py-2 px-4">${order.totalPrice}</td>
-                      <td className="py-2 px-4">
+                    <tr key={order._id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order._id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.createdAt.substring(0, 10)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{order.totalPrice}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {order.isPaid ? (
-                          <span className="text-green-600 font-bold">
-                            Paid {order.paidAt.substring(0, 10)}
-                          </span>
+                          <span className="text-green-600 font-bold">{order.paidAt.substring(0, 10)}</span>
                         ) : (
-                          <span className="text-red-600">Not Paid</span>
+                          <span className="text-red-600 font-bold">Not Paid</span>
                         )}
                       </td>
-                      <td className="py-2 px-4">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {order.isDelivered ? (
-                          <span className="text-green-600 font-bold">
-                            Delivered {order.deliveredAt.substring(0, 10)}
-                          </span>
+                          <span className="text-green-600 font-bold">{order.deliveredAt.substring(0, 10)}</span>
                         ) : (
-                          <span className="text-red-600">Not Delivered</span>
+                          <span className="text-red-600 font-bold">Not Delivered</span>
                         )}
-                        {/* Inside the table mapping */}
-                        <td className="py-2 px-4">
-                          {order.isCancelled ? (
-                            <span className="text-red-600 font-bold">Cancelled</span>
-                          ) : order.isDelivered ? (
-                            <span className="text-green-600">Delivered</span>
-                          ) : (
-                            <span className="text-yellow-600">Processing</span>
-                          )}
-                        </td>
                       </td>
-                      <td className="py-2 px-4">
-                        <Link to={`/order/${order._id}`} className="text-indigo-600 hover:underline">
-                          View
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Link to={`/order/${order._id}`} className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded">
+                          Details
                         </Link>
                       </td>
                     </tr>

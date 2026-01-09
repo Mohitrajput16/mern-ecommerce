@@ -10,7 +10,11 @@ import { toast } from 'react-toastify';
 const PlaceOrderPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
   const cart = useSelector((state) => state.cart);
+  // --- FIX: Get userInfo so we can use the token ---
+  const { userInfo } = useSelector((state) => state.auth); 
+  
   const { cartItems, shippingAddress, paymentMethod } = cart;
 
   useEffect(() => {
@@ -32,48 +36,46 @@ const PlaceOrderPage = () => {
     Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)
   );
 
-  // Inside PlaceOrderPage.jsx
+  const placeOrderHandler = async () => {
+    try {
+      // 1. Create the Config with Token
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`, // Now userInfo is defined!
+        },
+      };
 
-const placeOrderHandler = async () => {
-  try {
-    // 1. Create the Config with Token
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`, // <--- CRITICAL MISSING PIECE
-      },
-    };
+      // 2. Send the Request with Config
+      const { data } = await axios.post(
+        '/api/orders',
+        {
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          taxPrice: cart.taxPrice,
+          totalPrice: cart.totalPrice,
+        },
+        config 
+      );
 
-    // 2. Send the Request with Config
-    const { data } = await axios.post(
-      '/api/orders',
-      {
-        orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress,
-        paymentMethod: cart.paymentMethod,
-        itemsPrice: cart.itemsPrice,
-        shippingPrice: cart.shippingPrice,
-        taxPrice: cart.taxPrice,
-        totalPrice: cart.totalPrice,
-      },
-      config // <--- Pass it here as the 3rd argument
-    );
-
-    // 3. Success logic
-    dispatch(clearCartItems());
-    navigate(`/order/${data._id}`);
-    
-  } catch (err) {
-    toast.error(err.response?.data?.message || err.message);
-  }
-};
+      // 3. Success logic
+      dispatch(clearCartItems());
+      navigate(`/order/${data._id}`);
+      
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
 
   return (
     <Container>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Review Your Order</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* Column 1: Order Details (spans 2 columns on large screens) */}
+        {/* Column 1: Order Details */}
         <div className="lg:col-span-2">
           {/* Shipping Details */}
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -114,7 +116,7 @@ const placeOrderHandler = async () => {
                       </div>
                     </div>
                     <div className="text-gray-700">
-                      {item.qty} x ${item.price.toFixed(2)} = 
+                      {item.qty} x ₹{item.price.toFixed(2)} = 
                       <span className="font-semibold text-gray-900"> ₹{addDecimals(item.qty * item.price)}</span>
                     </div>
                   </div>
@@ -133,15 +135,15 @@ const placeOrderHandler = async () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-700">Items:</span>
-                <span className="font-medium text-gray-900">${itemsPrice}</span>
+                <span className="font-medium text-gray-900">₹{itemsPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700">Shipping:</span>
-                <span className="font-medium text-gray-900">${shippingPrice}</span>
+                <span className="font-medium text-gray-900">₹{shippingPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700">Tax:</span>
-                <span className="font-medium text-gray-900">${taxPrice}</span>
+                <span className="font-medium text-gray-900">₹{taxPrice}</span>
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t mt-2">
                 <span>Total:</span>
