@@ -2,44 +2,58 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Container from '../components/Container'; // <-- Import
-import { useSelector } from 'react-redux'; // <-- Import this
+import Container from '../components/Container';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify'; // Optional: Good for error messages
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth); // Get Token from Redux
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Handler for marking as delivered
+  // --- FIXED: Add Token to Deliver Handler ---
   const deliverHandler = async () => {
     try {
-      await axios.put(`/api/orders/${orderId}/deliver`, {});
-      // Reload page data to reflect changes
-      window.location.reload(); 
+      const config = {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      };
+      await axios.put(`/api/orders/${orderId}/deliver`, {}, config);
+      window.location.reload();
     } catch (err) {
-      alert('Error updating order');
+      alert(err.response?.data?.message || 'Error updating order');
     }
   };
-const cancelOrderHandler = async () => {
-   if (window.confirm('Are you sure you want to cancel this order?')) {
-     try {
-       await axios.put(`/api/orders/${order._id}/cancel`, {}, {
-         headers: { Authorization: `Bearer ${userInfo.token}` },
-       });
-       window.location.reload(); // Refresh to see changes
-     } catch (err) {
-       alert(err.response?.data?.message || err.message);
-     }
-   }
-};
+
+  const cancelOrderHandler = async () => {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        };
+        await axios.put(`/api/orders/${order._id}/cancel`, {}, config);
+        window.location.reload();
+      } catch (err) {
+        alert(err.response?.data?.message || err.message);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`/api/orders/${orderId}`);
+        
+        // --- FIXED: Add Token to Get Request ---
+        // If userInfo exists, send the token. 
+        // If not logged in, the backend will throw 401 anyway.
+        const config = {
+            headers: { Authorization: `Bearer ${userInfo?.token}` },
+        };
+
+        const { data } = await axios.get(`/api/orders/${orderId}`, config);
         setOrder(data);
         setLoading(false);
       } catch (err) {
@@ -47,8 +61,15 @@ const cancelOrderHandler = async () => {
         setLoading(false);
       }
     };
-    fetchOrder();
-  }, [orderId]);
+
+    if (userInfo) {
+        fetchOrder();
+    } else {
+        // Handle case where user isn't logged in but tries to view order
+        setError("Please log in to view this order");
+        setLoading(false);
+    }
+  }, [orderId, userInfo]);
 
   const addDecimals = (num) => (Math.round(num * 100) / 100).toFixed(2);
 
@@ -161,33 +182,35 @@ const cancelOrderHandler = async () => {
                 <span>₹{order.totalPrice}</span>
               </div>
             </div>
+            
+            {/* Cancel Button */}
             {!order.isCancelled && !order.isDelivered && (
-  <button
-    onClick={cancelOrderHandler}
-    className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition mt-4"
-  >
-    Cancel Order
-  </button>
-)}
+              <button
+                onClick={cancelOrderHandler}
+                className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition mt-4"
+              >
+                Cancel Order
+              </button>
+            )}
 
-{/* Show Cancelled Badge if true */}
-{order.isCancelled && (
-  <div className="bg-red-100 text-red-700 p-3 rounded mt-4 text-center font-bold">
-    This order has been cancelled on {order.cancelledAt?.substring(0, 10)}
-  </div>
-)}
-            {/* Payment button will go here */}
+            {/* Cancelled Badge */}
+            {order.isCancelled && (
+              <div className="bg-red-100 text-red-700 p-3 rounded mt-4 text-center font-bold">
+                This order has been cancelled on {order.cancelledAt?.substring(0, 10)}
+              </div>
+            )}
+            
             {/* Admin: Mark As Delivered Button */}
-  {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
-    <div className="mt-4">
-      <button
-        onClick={deliverHandler}
-        className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-gray-900"
-      >
-        Mark As Delivered
-      </button>
-    </div>
-  )}
+            {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+              <div className="mt-4">
+                <button
+                  onClick={deliverHandler}
+                  className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-gray-900"
+                >
+                  Mark As Delivered
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
