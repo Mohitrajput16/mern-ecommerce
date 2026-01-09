@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCartItems } from '../store/cartSlice';
 import axios from 'axios';
-import Container from '../components/Container'; // <-- Import
+import Container from '../components/Container'; 
+import { toast } from 'react-toastify';
 
 const PlaceOrderPage = () => {
   const navigate = useNavigate();
