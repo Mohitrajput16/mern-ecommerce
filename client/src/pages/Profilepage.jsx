@@ -36,16 +36,19 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchMyOrders = async () => {
       try {
-        setLoadingOrders(true);
+        // <--- 3. Create Config with Token
         const config = {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
         };
+
+        // <--- 4. Pass config to the GET request
         const { data } = await axios.get('/api/orders/myorders', config);
+        
         setOrders(data);
-        setLoadingOrders(false);
       } catch (err) {
-        setOrdersError(err.response?.data?.message || err.message);
-        setLoadingOrders(false);
+        toast.error(err.response?.data?.message || err.message);
       }
     };
 
