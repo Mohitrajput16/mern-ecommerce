@@ -13,11 +13,28 @@ dotenv.config();
 connectDB();
 
 const app = express();
+// Define ALL the websites you want to allow
+const allowedOrigins = [
+  'https://mern-ecommerce-hguc.vercel.app',      // Link 2
+  'http://localhost:5173',                         // Your Laptop
+  'http://localhost:5000'                          // Your API (just in case)
+];
 
 app.use(cors({
-  origin: 'https://mern-ecommerce-beryl-ten.vercel.app', // <--- Update this to the new link
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    // Check if the incoming origin is in our allowed list
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
+
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
