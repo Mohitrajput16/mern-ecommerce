@@ -1,6 +1,8 @@
 // server/controllers/userController.js
 import User from '../models/userModel.js';
-
+import asyncHandler from '../middleware/asyncHandler.js';
+import generateToken from '../utils/generateToken.js';
+// If you don't have generateToken.js, let me know, and we can use 'jsonwebtoken' directly. 
 import bcrypt from 'bcryptjs'; // Need this for password update
 
 // @desc    Get user profile
@@ -21,6 +23,66 @@ const getUserProfile = async (req, res) => {
     throw new Error('User not found');
   }
 };
+
+// @desc    Register user
+// @route   POST /api/users
+// @access  Public
+const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    res.status(400);
+    throw new Error('User already exists');
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+
+  if (user) {
+    const token = generateToken(res, user._id);
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: token, // <--- CRITICAL: Send token here too
+    });
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
+});
+// @desc    Auth user & get token
+// @route   POST /api/users/login (or /auth)
+// @access  Public
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    // We generate the token
+    const token = generateToken(res, user._id); 
+
+    // AND we send it back in the JSON
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: token, // <--- CRITICAL: Send token to frontend
+    });
+  } else {
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+});
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
@@ -81,4 +143,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getUserProfile,updateUserProfile,getUsers, deleteUser };
+export {
+  authUser,      // <--- Added
+  registerUser,  // <--- Added
+  getUserProfile,
+  updateUserProfile,
+  getUsers,
+  deleteUser,
+};
