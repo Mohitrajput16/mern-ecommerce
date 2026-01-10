@@ -1,6 +1,6 @@
 // server/controllers/userController.js
 import User from '../models/userModel.js';
-import asyncHandler from '../middleware/asyncHandler.js';
+import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
 // If you don't have generateToken.js, let me know, and we can use 'jsonwebtoken' directly. 
 import bcrypt from 'bcryptjs'; // Need this for password update
