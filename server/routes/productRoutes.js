@@ -12,6 +12,7 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 import {
   getCategories, 
 } from '../controllers/productController.js';
+import { getRelatedProducts } from '../controllers/productController.js';
 
 
 // Route for getting all products
@@ -20,6 +21,7 @@ router.route('/')
 .post(protect, admin, createProduct); // <-- POST to create
 
 router.route('/categories').get(getCategories);
+router.route('/:id/related').get(getRelatedProducts);
 
 router
   .route('/:id')

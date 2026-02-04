@@ -150,9 +150,29 @@ const getCategories = async (req, res) => {
   res.json(categories);
 };
 
+const getRelatedProducts = asyncHandler(async (req, res) => {
+  const currentProduct = await Product.findById(req.params.id);
+
+  if (currentProduct) {
+    // Find products with same category, NOT equal to current ID, limit to 4
+    const related = await Product.find({
+      category: currentProduct.category,
+      _id: { $ne: currentProduct._id } // $ne means "Not Equal"
+    }).limit(4);
+
+    res.json(related);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
+
+
 // Export them at the bottom
 export { 
-  getAllProducts, 
+  getAllProducts,
+  getRelatedProducts, 
   getProductById, 
   deleteProduct, 
   createProduct, // <-- Add
