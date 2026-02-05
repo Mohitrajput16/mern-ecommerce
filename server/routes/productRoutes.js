@@ -9,7 +9,7 @@ import {
   updateProduct,
   getRelatedProducts, // <--- Ensure this is imported
   getCategories,      // <--- Combined import
-  getTopProducts      // <--- Don't forget this if you use it!
+  // getTopProducts      // <--- Don't forget this if you use it!
 } from '../controllers/productController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
