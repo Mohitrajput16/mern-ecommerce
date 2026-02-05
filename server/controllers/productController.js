@@ -172,10 +172,10 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
 // Export them at the bottom
 export { 
   getAllProducts,
-  getRelatedProducts, 
   getProductById, 
   deleteProduct, 
   createProduct, // <-- Add
   updateProduct,
-  getCategories  // <-- Add
+  getCategories,  // <-- Add
+  getRelatedProducts
 };
