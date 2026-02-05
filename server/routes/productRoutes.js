@@ -21,7 +21,7 @@ router.route('/')
 // 2. Specific Static Routes (Match /something)
 // These MUST come before /:id or they will be treated as an ID
 router.route('/categories').get(getCategories);
-router.route('/top').get(getTopProducts); 
+// router.route('/top').get(getTopProducts); 
 
 // 3. Parameterized Routes (Match /:id/something)
 router.route('/:id/related').get(getRelatedProducts);
