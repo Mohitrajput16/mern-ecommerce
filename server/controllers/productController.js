@@ -1,4 +1,5 @@
 // server/controllers/productController.js
+import asyncHandler from 'async-handler';
 import Product from '../models/productModel.js';
 
 // @desc    Fetch all products
