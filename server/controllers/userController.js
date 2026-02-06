@@ -1,9 +1,9 @@
+// server/controllers/userController.js
 import User from '../models/userModel.js';
-import asyncHandler from 'express-async-handler';
-import jwt from 'jsonwebtoken'; // <--- 1. Import JWT directly
-// import bcrypt from 'bcryptjs'; 
+import jwt from 'jsonwebtoken'; 
+import asyncHandler from 'express-async-handler'; // Ensure this package is installed
 
-// --- HELPER FUNCTION INSIDE THE FILE ---
+// --- 1. INTERNAL TOKEN GENERATOR (No external file needed) ---
 const generateTokenInternal = (id) => {
   return jwt.sign({ userId: id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
@@ -20,26 +20,17 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user && (await user.matchPassword(password))) {
     
-    // 2. Generate Token Here
+    // --- 2. GENERATE TOKEN HERE ---
     const token = generateTokenInternal(user._id);
 
+    // --- 3. SEND TOKEN IN RESPONSE ---
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: token, // <--- Guaranteed to exist now
+      token: token, // <--- This MUST be here
     });
-    // 3. Optional: Set Cookie (for safety)
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-
-    // 4. Send Response
-    
   } else {
     res.status(401);
     throw new Error('Invalid email or password');
@@ -68,19 +59,12 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     const token = generateTokenInternal(user._id);
 
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: token,
+      token: token, // <--- AND HERE
     });
   } else {
     res.status(400);
@@ -123,7 +107,7 @@ const updateUserProfile = async (req, res) => {
 
     const updatedUser = await user.save();
     
-    // Re-generate token just in case
+    // Send new token on update too, just in case
     const token = generateTokenInternal(updatedUser._id);
 
     res.json({
@@ -140,26 +124,18 @@ const updateUserProfile = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
-  }
+  const users = await User.find({});
+  res.json(users);
 };
 
 const deleteUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (user) {
-      await user.deleteOne();
-      res.json({ message: 'User removed' });
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+  const user = await User.findById(req.params.id);
+  if (user) {
+    await user.deleteOne();
+    res.json({ message: 'User removed' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
   }
 };
 
