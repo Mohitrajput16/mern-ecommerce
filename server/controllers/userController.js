@@ -25,6 +25,7 @@ const authUser = async (req, res, next) => {
         email: user.email,
         isAdmin: user.isAdmin,
         token: token, // <--- Guaranteed to send now
+        testMessage: "I AM THE NEW CODE", // <--- Add this line!
       });
     } else {
       res.status(401);
