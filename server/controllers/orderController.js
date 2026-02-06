@@ -33,6 +33,26 @@ const createOrder = async (req, res) => {
     });
 
     const createdOrder = await order.save();
+    // 2. Send Confirmation Email (Wrap in try-catch so it doesn't crash the order if email fails)
+    try {
+      await sendEmail({
+        email: req.user.email, // User's email from the auth middleware
+        subject: `Order Confirmation #${createdOrder._id}`,
+        message: `
+          <h1>Thank you for your order, ${req.user.name}!</h1>
+          <p>We have received your order and are processing it.</p>
+          <hr/>
+          <h3>Order ID: ${createdOrder._id}</h3>
+          <p><strong>Total Amount:</strong> $${totalPrice}</p>
+          <p>You can view your order status in your profile.</p>
+        `,
+      });
+      console.log(`Email sent to ${req.user.email}`);
+    } catch (error) {
+      console.error('Email could not be sent:', error);
+      // We do NOT throw an error here, because the order WAS created successfully. 
+      // We just log it so we know the email failed.
+    }
     res.status(201).json(createdOrder);
 
   } catch (error) {
