@@ -23,6 +23,13 @@ const authUser = asyncHandler(async (req, res) => {
     // 2. Generate Token Here
     const token = generateTokenInternal(user._id);
 
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: token, // <--- Guaranteed to exist now
+    });
     // 3. Optional: Set Cookie (for safety)
     res.cookie('jwt', token, {
       httpOnly: true,
@@ -32,13 +39,7 @@ const authUser = asyncHandler(async (req, res) => {
     });
 
     // 4. Send Response
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      token: token, // <--- Guaranteed to exist now
-    });
+    
   } else {
     res.status(401);
     throw new Error('Invalid email or password');
